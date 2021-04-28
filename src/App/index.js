@@ -1,37 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import BookForm from '../components/BookForm';
+import BookCard from '../components/BookCard';
 import './App.scss';
+import { getBooks } from '../helpers/data/bookData';
 
 function App() {
-  const [domWriting, setDomWriting] = useState('Nothing Here!');
+  const [books, setBooks] = useState([]);
 
-  const handleClick = (e) => {
-    console.warn(`You clicked ${e.target.id}`);
-    setDomWriting(`You clicked ${e.target.id}! Check the Console!`);
-  };
+  useEffect(() => {
+    getBooks().then((resp) => setBooks(resp));
+  }, []);
 
   return (
-    <div className='App'>
-      <h2>INSIDE APP COMPONENT</h2>
-      <div>
-        <button
-          id='this-button'
-          className='btn btn-info'
-          onClick={handleClick}
-        >
-          I am THIS button
-        </button>
+    <>
+    <BookForm
+      formTitle='Add Book'
+      setBooks={setBooks}
+      />
+      <hr/>
+      <div className="card-container">
+        {books.map((bookInfo) => (
+          <BookCard
+            key={bookInfo.firebaseKey}
+            firebaseKey={bookInfo.firebaseKey}
+            title={bookInfo.title}
+            author={bookInfo.author}
+            price={Number(bookInfo.grade)}
+            setBooks={setBooks}
+           />
+        ))}
       </div>
-      <div>
-        <button
-          id='that-button'
-          className='btn btn-primary mt-3'
-          onClick={handleClick}
-        >
-          I am THAT button
-        </button>
-      </div>
-      <h3>{domWriting}</h3>
-    </div>
+    </>
   );
 }
 
